@@ -14,6 +14,7 @@ SOURCE_CHANNEL = -1003978130783
 # Use -100 IDs for private channels, and '@username' strings for public channels/people.
 DESTINATION_CHANNELS = [
     -1001241292889, 
+    '@TheBoyInYellow'
     # '@Keshav2900',  # Example of a second person
     # -1009876543210, # Example of a third channel
 ]
