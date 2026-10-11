@@ -2,3 +2,4 @@
 *.session-journal
 botenv/
 __pycache__/
+.env

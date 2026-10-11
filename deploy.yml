@@ -3,7 +3,7 @@ name: Deploy Telegram Bot to GCP
 on:
   push:
     branches:
-      - main # Automatically runs whenever you push to the main branch
+      - main
 
 jobs:
   deploy:
@@ -11,32 +11,37 @@ jobs:
     steps:
       - name: Deploy to GCP e2-micro
         uses: appleboy/ssh-action@v1
+        # 1. Pull the API keys from GitHub Secrets
+        env:
+          TG_API_ID: ${{ secrets.TG_API_ID }}
+          TG_API_HASH: ${{ secrets.TG_API_HASH }}
         with:
           host: ${{ secrets.GCP_HOST }}
           username: ${{ secrets.GCP_USERNAME }}
           key: ${{ secrets.GCP_SSH_KEY }}
-          # The script that runs ON your server automatically
+          # 2. Pass them into the SSH session environment
+          envs: TG_API_ID,TG_API_HASH
           script: |
-            # Create a folder if it doesn't exist
             mkdir -p ~/tg-bot
             cd ~/tg-bot
             
-            # Pull the latest code from GitHub
-            # (Replace YOUR-GITHUB-URL with your actual repo clone URL)
+            # Pull the latest code
             if [ ! -d ".git" ]; then
+              # Replace with your actual GitHub Personal Access Token URL if repo is private
               git clone https://github.com/Vaibhav-162/telegram-message-forwarder .
             else
               git pull origin main
             fi
             
-            # Create virtual environment if it doesn't exist
+            # 3. Write the secrets into a hidden .env file on the server
+            echo "TG_API_ID=$TG_API_ID" > .env
+            echo "TG_API_HASH=$TG_API_HASH" >> .env
+            
             if [ ! -d "botenv" ]; then
               python3 -m venv botenv
             fi
             
-            # Install any new dependencies
             source botenv/bin/activate
             pip install -r requirements.txt
             
-            # Restart the background service to apply the new code
             sudo systemctl restart tg-forwarder.service
