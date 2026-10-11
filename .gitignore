@@ -1,0 +1,4 @@
+*.session
+*.session-journal
+botenv/
+__pycache__/

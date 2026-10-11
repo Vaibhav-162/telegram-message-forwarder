@@ -1,0 +1,42 @@
+name: Deploy Telegram Bot to GCP
+
+on:
+  push:
+    branches:
+      - main # Automatically runs whenever you push to the main branch
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy to GCP e2-micro
+        uses: appleboy/ssh-action@v1
+        with:
+          host: ${{ secrets.GCP_HOST }}
+          username: ${{ secrets.GCP_USERNAME }}
+          key: ${{ secrets.GCP_SSH_KEY }}
+          # The script that runs ON your server automatically
+          script: |
+            # Create a folder if it doesn't exist
+            mkdir -p ~/tg-bot
+            cd ~/tg-bot
+            
+            # Pull the latest code from GitHub
+            # (Replace YOUR-GITHUB-URL with your actual repo clone URL)
+            if [ ! -d ".git" ]; then
+              git clone YOUR-GITHUB-URL .
+            else
+              git pull origin main
+            fi
+            
+            # Create virtual environment if it doesn't exist
+            if [ ! -d "botenv" ]; then
+              python3 -m venv botenv
+            fi
+            
+            # Install any new dependencies
+            source botenv/bin/activate
+            pip install -r requirements.txt
+            
+            # Restart the background service to apply the new code
+            sudo systemctl restart tg-forwarder.service
