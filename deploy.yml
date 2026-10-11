@@ -24,7 +24,7 @@ jobs:
             # Pull the latest code from GitHub
             # (Replace YOUR-GITHUB-URL with your actual repo clone URL)
             if [ ! -d ".git" ]; then
-              git clone YOUR-GITHUB-URL .
+              git clone https://github.com/Vaibhav-162/telegram-message-forwarder .
             else
               git pull origin main
             fi
