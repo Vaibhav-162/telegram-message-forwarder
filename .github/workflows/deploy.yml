@@ -26,17 +26,21 @@ jobs:
         env:
           TG_API_ID: ${{ secrets.TG_API_ID }}
           TG_API_HASH: ${{ secrets.TG_API_HASH }}
+          # Added the new secret here
+          SOURCE_CHANNEL: ${{ secrets.SOURCE_CHANNEL }}
         with:
           host: ${{ secrets.GCP_HOST }}
           username: ${{ secrets.GCP_USERNAME }}
           key: ${{ secrets.GCP_SSH_KEY }}
-          envs: TG_API_ID,TG_API_HASH
+          # Appended SOURCE_CHANNEL to the envs list
+          envs: TG_API_ID,TG_API_HASH,SOURCE_CHANNEL
           script: |
             cd ~/tg-bot
             
             # 1. Securely write the .env file
             echo "TG_API_ID=$TG_API_ID" > .env
             echo "TG_API_HASH=$TG_API_HASH" >> .env
+            echo "SOURCE_CHANNEL=$SOURCE_CHANNEL" >> .env
             
             # 2. Build the Python virtual environment
             if [ ! -d "botenv" ]; then
@@ -54,7 +58,8 @@ jobs:
             [Service]
             User=$USER
             WorkingDirectory=/home/$USER/tg-bot
-            ExecStart=/home/$USER/tg-bot/botenv/bin/python /home/$USER/tg-bot/forwarder.py
+            # Added the -u flag here so your print statements show up in the logs
+            ExecStart=/home/$USER/tg-bot/botenv/bin/python -u /home/$USER/tg-bot/forwarder.py
             Restart=always
             RestartSec=10
             

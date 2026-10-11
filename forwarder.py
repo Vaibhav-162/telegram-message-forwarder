@@ -6,9 +6,7 @@ from dotenv import load_dotenv
 load_dotenv()
 API_ID = int(os.environ.get('TG_API_ID'))
 API_HASH = os.environ.get('TG_API_HASH')
-
-# 2. Channel IDs 
-SOURCE_CHANNEL = -1003978130783
+SOURCE_CHANNEL = int(os.environ.get('SOURCE_CHANNEL'))
 
 # Add as many destinations as you want to this list. 
 # Use -100 IDs for private channels, and '@username' strings for public channels/people.
