@@ -25,7 +25,7 @@ async def forward_new_messages(event):
     # Loop through every destination in the list
     for dest in DESTINATION_CHANNELS:
         try:
-            await event.forward_to(dest)
+            await client.send_message(dest, event.message)
             print(f"Successfully forwarded message ID {event.id} to {dest}")
         except Exception as e:
             print(f"Failed to forward message to {dest}. Error: {e}")
