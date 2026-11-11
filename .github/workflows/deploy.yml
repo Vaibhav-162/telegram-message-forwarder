@@ -26,13 +26,11 @@ jobs:
         env:
           TG_API_ID: ${{ secrets.TG_API_ID }}
           TG_API_HASH: ${{ secrets.TG_API_HASH }}
-          # Added the new secret here
           SOURCE_CHANNEL: ${{ secrets.SOURCE_CHANNEL }}
         with:
           host: ${{ secrets.GCP_HOST }}
           username: ${{ secrets.GCP_USERNAME }}
           key: ${{ secrets.GCP_SSH_KEY }}
-          # Appended SOURCE_CHANNEL to the envs list
           envs: TG_API_ID,TG_API_HASH,SOURCE_CHANNEL
           script: |
             cd ~/tg-bot
@@ -62,6 +60,8 @@ jobs:
             ExecStart=/home/$USER/tg-bot/botenv/bin/python -u /home/$USER/tg-bot/forwarder.py
             Restart=always
             RestartSec=10
+            # Forces a clean restart every 24 hours to prevent silent TCP disconnects
+            RuntimeMaxSec=86400
             
             [Install]
             WantedBy=multi-user.target
